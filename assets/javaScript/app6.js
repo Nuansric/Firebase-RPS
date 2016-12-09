@@ -115,6 +115,7 @@ $(document).ready(function(){
 			}//playerScore
 	}//checkWinners
 
+	
 	/*DOM IDs Munipulation
 		#greetings - receive input of player's name or show greeting message to player after enter
 		#whose-turn - inform each player of each other turn
@@ -143,6 +144,31 @@ $(document).ready(function(){
 
 	//this will run after every database change
 	database.ref().on("value", function(snapshot){
+
+		function playerDisconnect(){
+		if(PlayerName != ""){
+			//if this is Player 1's browser
+			if ((snapshot.child("players").child(1).exists()) && (PlayerName == snapshot.child("players").child(1).val().name)){					
+					//push the message to the database
+		database.ref("/chat").onDisconnect().update({							
+			message: ((snapshot.child("players").child(1).val().name) + " has been DISCONNECTED!!"),
+			dateAdded: firebase.database.ServerValue.TIMESTAMP												
+		});
+					//delete the player 1 database
+		database.ref("players/1").onDisconnect().remove();
+	}else if ((snapshot.child("players").child(2).exists()) && (PlayerName == snapshot.child("players").child(2).val().name)){	
+			//push the message to the database	
+		database.ref("/chat").onDisconnect().update({						
+			message: ((snapshot.child("players").child(2).val().name) + " has been DISCONNECTED!!"),
+			dateAdded: firebase.database.ServerValue.TIMESTAMP													
+		});//database	
+		//delete the player 1 database
+		database.ref("players/2").onDisconnect().remove();
+		//delete the turn database				
+		database.ref("/turn").onDisconnect().remove();	
+	}
+}
+}
 		//if player 1 dont exists, empty all that related to player 1 and unhilighted both user div
 		if(((snapshot.child("players").child(1).exists()) == false)){
 				$("#waiting1").html("Waiting for player 1");
@@ -173,12 +199,14 @@ $(document).ready(function(){
 				$("#player-1").attr("style", "border: 5px solid white");
 				$("#player-2").attr("style", "border: 5px solid white");
 				hidden();
+				playerDisconnect();
 		};
 		//if player 1 exists but not 2,,show player 1 name in his div and unhilighted both user div
 		if((snapshot.child("players").child(1).exists()) && ((snapshot.child("players").child(2).exists()) === false)){
 				$("#waiting1").empty(); 
 				$("#player1-name").html(snapshot.child("players").child(1).val().name);
 				hidden();
+				playerDisconnect();
 					//at the player1's  browser
 					if(PlayerName == snapshot.child("players").child(1).val().name){
 							$("#greetings").html("<h2>Hello " + snapshot.child("players").child(1).val().name +  ".  You are player 1!</h2>");					
@@ -200,6 +228,8 @@ $(document).ready(function(){
 					$("#lose2").html("LOSE: " + snapshot.child("players").child(2).val().lose);
 					$("#win1").html("WIN: " + snapshot.child("players").child(1).val().win);
 					$("#lose1").html("LOSE: " + snapshot.child("players").child(1).val().lose);
+
+				playerDisconnect();
 					
 				//player 1's browser at player 1's turn
 				if((PlayerName == snapshot.child("players").child(1).val().name) && (databaseTurn == 1)){
@@ -366,20 +396,24 @@ $(document).ready(function(){
 			newMessage = PlayerName + " : " + messages;
 					
 					//push each chat messages into teh database along with the time it was added
-					database.ref("/chat").push({		
+					database.ref("/chat").update({		
 						message: newMessage,
 						dateAdded: firebase.database.ServerValue.TIMESTAMP								
 					});//database push
 	}); //on click
 
 	//updating the chat messages in the browser's chat window by using the last one added into the database (time added)
-	database.ref("/chat").orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
+	database.ref("/chat").orderByChild("dateAdded").limitToLast(1).on("value", function(snapshot) {
 	    		 $("#chat-window").append("</br>" + snapshot.val().message);
 	});//database
 
 }); // .ready
 
-//before the window unload...
+
+
+
+
+/*//before the window unload...
 $(window).bind("beforeunload", function() { 
 
 	//accessing databse
@@ -416,6 +450,6 @@ $(window).bind("beforeunload", function() {
 			}//else if
 		}//if
 	});//database once
-});//.bind
+});//.bind*/
 
 
