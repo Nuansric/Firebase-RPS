@@ -133,6 +133,7 @@ $(document).ready(function(){
 						"</br></br><input type='submit' id='submit-name'>");
 	$("#waiting1").html("Waiting for player 1");
 	$("#waiting2").html("Waiting for player 2");
+	
 	//Hide these when both players dont exists
 	function hidden() {
 			$("#player1choices").attr("style", "visibility:hidden");
@@ -146,29 +147,31 @@ $(document).ready(function(){
 	database.ref().on("value", function(snapshot){
 
 		function playerDisconnect(){
-		if(PlayerName != ""){
-			//if this is Player 1's browser
-			if ((snapshot.child("players").child(1).exists()) && (PlayerName == snapshot.child("players").child(1).val().name)){					
-					//push the message to the database
-		database.ref("/chat").onDisconnect().update({							
-			message: ((snapshot.child("players").child(1).val().name) + " has been DISCONNECTED!!"),
-			dateAdded: firebase.database.ServerValue.TIMESTAMP												
-		});
-					//delete the player 1 database
-		database.ref("players/1").onDisconnect().remove();
-	}else if ((snapshot.child("players").child(2).exists()) && (PlayerName == snapshot.child("players").child(2).val().name)){	
-			//push the message to the database	
-		database.ref("/chat").onDisconnect().update({						
-			message: ((snapshot.child("players").child(2).val().name) + " has been DISCONNECTED!!"),
-			dateAdded: firebase.database.ServerValue.TIMESTAMP													
-		});//database	
-		//delete the player 1 database
-		database.ref("players/2").onDisconnect().remove();
-		//delete the turn database				
-		database.ref("/turn").onDisconnect().remove();	
-	}
-}
-}
+			if(PlayerName != ""){
+				//if this is Player 1's browser
+				if ((snapshot.child("players").child(1).exists()) && (PlayerName == snapshot.child("players").child(1).val().name)){					
+						//update the message to the database
+						database.ref("/chat").onDisconnect().update({							
+							message: ((snapshot.child("players").child(1).val().name) + " has been DISCONNECTED!!"),
+							dateAdded: firebase.database.ServerValue.TIMESTAMP												
+						});
+						//delete the player 1 database
+						database.ref("players/1").onDisconnect().remove();
+				//if this is Player 2's browser
+				}else if ((snapshot.child("players").child(2).exists()) && (PlayerName == snapshot.child("players").child(2).val().name)){	
+						//update the message to the database	
+						database.ref("/chat").onDisconnect().update({						
+							message: ((snapshot.child("players").child(2).val().name) + " has been DISCONNECTED!!"),
+							dateAdded: firebase.database.ServerValue.TIMESTAMP													
+						});//database	
+						//delete the player 1 database
+						database.ref("players/2").onDisconnect().remove();
+						//delete the turn database				
+						database.ref("/turn").onDisconnect().remove();	
+				}// else if
+			}//if
+		}//playerDisConnect
+		
 		//if player 1 dont exists, empty all that related to player 1 and unhilighted both user div
 		if(((snapshot.child("players").child(1).exists()) == false)){
 				$("#waiting1").html("Waiting for player 1");
@@ -395,7 +398,7 @@ $(document).ready(function(){
 			//restate the newMessage to give it's a value
 			newMessage = PlayerName + " : " + messages;
 					
-					//push each chat messages into teh database along with the time it was added
+					//update each chat messages into teh database along with the time it was added
 					database.ref("/chat").update({		
 						message: newMessage,
 						dateAdded: firebase.database.ServerValue.TIMESTAMP								
@@ -408,48 +411,3 @@ $(document).ready(function(){
 	});//database
 
 }); // .ready
-
-
-
-
-
-/*//before the window unload...
-$(window).bind("beforeunload", function() { 
-
-	//accessing databse
-	database.ref().once('value').then(function(snapshot) {
-
-		//if there is a player in the browser
-		if(PlayerName != ""){
-			//if this is Player 1's browser
-			if ((snapshot.child("players").child(1).exists()) && (PlayerName == snapshot.child("players").child(1).val().name)){					
-					//push the message to the database
-					database.ref("/chat").push({							
-							message: ((snapshot.child("players").child(1).val().name) + " has been DISCONNECTED!!"),
-							dateAdded: firebase.database.ServerValue.TIMESTAMP												
-					});
-					//delete the player 1 database
-					database.ref("players/1").set({
-							name : null
-					});					
-			//if this is Player 2's browser
-			} else if ((snapshot.child("players").child(2).exists()) && (PlayerName == snapshot.child("players").child(2).val().name)){
-					//push the message to the database	
-					database.ref("/chat").push({							
-							message: ((snapshot.child("players").child(2).val().name) + " has been DISCONNECTED!!"),
-							dateAdded: firebase.database.ServerValue.TIMESTAMP													
-					});//database	
-					//delete the player 1 database
-					database.ref("players/2").set({
-							name : null
-					});//database		
-					//delete the turn database				
-					database.ref().update({
-							turn : null
-					});//database
-			}//else if
-		}//if
-	});//database once
-});//.bind*/
-
-

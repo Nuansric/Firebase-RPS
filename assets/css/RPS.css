@@ -47,6 +47,7 @@ button{
 }
 #name-input{
 	width: 50%;
+	color: #363234;
 }
 #submit-name{
 	width: 100px;
@@ -105,7 +106,8 @@ button{
 
 }
 #chat-input{
-	width: 100%
+	width: 100%;
+	color: #363234;
 }
 
 #submit-chat{
