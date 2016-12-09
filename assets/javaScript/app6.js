@@ -196,10 +196,10 @@ $(document).ready(function(){
 					$("#waiting1").empty();
 					$("#player2-name").html(snapshot.child("players").child(2).val().name);
 					$("#player1-name").html(snapshot.child("players").child(1).val().name);
-					$("#win2").html("WIN: " + player_2_win);
-					$("#lose2").html("LOSE: " + player_2_lose);
-					$("#win1").html("WIN: " + player_1_win);
-					$("#lose1").html("LOSE: " + player_1_lose);
+					$("#win2").html("WIN: " + snapshot.child("players").child(2).val().win);
+					$("#lose2").html("LOSE: " + snapshot.child("players").child(2).val().lose);
+					$("#win1").html("WIN: " + snapshot.child("players").child(1).val().win);
+					$("#lose1").html("LOSE: " + snapshot.child("players").child(1).val().lose);
 					
 				//player 1's browser at player 1's turn
 				if((PlayerName == snapshot.child("players").child(1).val().name) && (databaseTurn == 1)){
