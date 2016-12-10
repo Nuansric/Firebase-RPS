@@ -202,6 +202,7 @@ $(document).ready(function(){
 				$("#player-1").attr("style", "border: 5px solid white");
 				$("#player-2").attr("style", "border: 5px solid white");
 				hidden();
+				//when any player disconnect from the game
 				playerDisconnect();
 		};
 		//if player 1 exists but not 2,,show player 1 name in his div and unhilighted both user div
@@ -209,6 +210,7 @@ $(document).ready(function(){
 				$("#waiting1").empty(); 
 				$("#player1-name").html(snapshot.child("players").child(1).val().name);
 				hidden();
+				//when any player disconnect from the game
 				playerDisconnect();
 					//at the player1's  browser
 					if(PlayerName == snapshot.child("players").child(1).val().name){
@@ -231,8 +233,8 @@ $(document).ready(function(){
 					$("#lose2").html("LOSE: " + snapshot.child("players").child(2).val().lose);
 					$("#win1").html("WIN: " + snapshot.child("players").child(1).val().win);
 					$("#lose1").html("LOSE: " + snapshot.child("players").child(1).val().lose);
-
-				playerDisconnect();
+					//when any player disconnect from the game
+					playerDisconnect();
 					
 				//player 1's browser at player 1's turn
 				if((PlayerName == snapshot.child("players").child(1).val().name) && (databaseTurn == 1)){
@@ -407,7 +409,7 @@ $(document).ready(function(){
 
 	//updating the chat messages in the browser's chat window by using the last one added into the database (time added)
 	database.ref("/chat").orderByChild("dateAdded").limitToLast(1).on("value", function(snapshot) {
-	    		 $("#chat-window").append("</br>" + snapshot.val().message);
+	    		 $("#chat-window").append("</br>" + snapshot.val().message + "</br>");
 	});//database
 
 }); // .ready
