@@ -109,7 +109,7 @@ $(document).ready(function(){
 				}
 				// if user and computer picks the same
 				if(user_1_Choice == user_2_Choice) {
-					$("#winner").html("It's a tide!");
+					$("#winner").html("It's a tie!");
 				}
 
 			}//playerScore
